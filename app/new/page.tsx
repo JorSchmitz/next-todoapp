@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { GraphQLClient, gql } from 'graphql-request'
 import { z } from 'zod'
+import { revalidatePath } from 'next/cache'
 
 const mutation = gql`
   mutation addTodo($title: String!) {
@@ -27,6 +28,7 @@ async function addTodo(formData: FormData) {
   const parsed = await formValuesSchema.parseAsync(formValues)
   const graphQLClient = new GraphQLClient('http://localhost:3000/api/graphql')
   await graphQLClient.request(mutation, parsed)
+  revalidatePath('/')
   redirect('/')
 }
 
